@@ -5,6 +5,7 @@ const btn = document.getElementById('surpriseBtn');
 const music = document.getElementById('hbdMusic');
 const secretArea = document.getElementById('secretArea');
 
+// 1. Munculin hiasan (Tetap sama)
 function spawnItem() {
     const item = document.createElement('div');
     item.className = 'floating-item';
@@ -15,9 +16,9 @@ function spawnItem() {
     container.appendChild(item);
     setTimeout(() => item.remove(), 12000);
 }
-
 setInterval(spawnItem, 600);
 
+// 2. Efek Confetti (Tetap sama)
 function burstConfetti() {
     for (let i = 0; i < 30; i++) {
         const conf = document.createElement('div');
@@ -38,14 +39,30 @@ function burstConfetti() {
     }
 }
 
-btn.addEventListener('click', () => {
-    music.play().catch(e => console.log("Musik diblokir browser, klik lagi!"));
+// 3. MODIFIKASI DISINI (Khusus buat HP)
+btn.addEventListener('click', function() {
+    // Pastikan volume full dan tidak mute
+    music.muted = false;
+    music.volume = 1.0;
+
+    // Coba putar musik dengan penanganan error yang lebih baik
+    const playPromise = music.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            console.log("Mantap, musik jalan!");
+        }).catch(error => {
+            console.log("Masih diblokir, coba klik tombol speaker nanti.");
+            // Kadang HP butuh interaksi kedua, tapi ini sudah usaha maksimal
+        });
+    }
+
     secretArea.classList.remove('hidden');
-    btn.style.display = 'none';
+    this.style.display = 'none';
     setInterval(burstConfetti, 1000);
 });
 
-// Fungsi untuk tombol speaker (On/Off Musik)
+// 4. Fungsi Speaker (Supaya bisa dinyalain manual kalau auto-nya gagal)
 function toggleMusic() {
     if (music.paused) {
         music.play();
